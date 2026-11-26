@@ -1,68 +1,607 @@
+
 <!doctype html>
 <html lang="uk">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#071b4b"><link rel="manifest" href="/manifest.webmanifest">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071b4b">
+<link rel="manifest" href="/manifest.webmanifest">
 <title>Мереживо KYIV — графік електропостачання</title>
 <style>
-:root{color-scheme:dark;--bg:#06163d;--panel:#0b2458;--line:#244879;--cyan:#42d9f5;--blue:#278cff;--muted:#a7badb;--white:#eef7ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 15%,#123875 0,#081e4c 42%,#041332 100%);color:var(--white);font:16px/1.5 system-ui,sans-serif;min-height:100vh}
-.wrap{width:min(100%,760px);margin:auto;padding:18px 16px 42px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}.brand{font-weight:750;letter-spacing:.4px}.status,.tag{font-size:11px;color:#9cecff;border:1px solid #28618a;border-radius:30px;padding:6px 10px}
-.hero{text-align:center;padding:20px 0}.hero h1{font-size:clamp(38px,8vw,58px);font-weight:300;letter-spacing:2px;margin:0;color:#dffaff}.hero .sub{letter-spacing:4px;font-size:11px;color:#8adcf0}.hero p{color:#b5c9e7;font-style:italic;margin:5px}
-.panel{background:linear-gradient(145deg,rgba(13,42,93,.94),rgba(7,27,68,.96));border:1px solid #234879;border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 12px 35px #020d2a66}
-h2{font-size:18px;margin:0 0 12px}.muted{color:var(--muted);font-size:13px}
-label{display:block;font-size:12px;color:#a9c5e7;margin:8px 0 5px}input{width:100%;background:#061a43;border:1px solid #315787;border-radius:12px;padding:13px;color:white;font:inherit;outline:none}input:focus{border-color:var(--cyan)}
-button{border:0;border-radius:13px;background:linear-gradient(100deg,#138de8,#20c4e6);color:#001b40;font-weight:750;font-size:15px;padding:13px 18px;cursor:pointer;width:100%;margin-top:12px}
-button:disabled{opacity:.55;cursor:wait}.suggestions{display:grid;gap:6px;margin-top:7px}.suggestions button{margin:0;text-align:left;background:#102e61;color:#e2f5ff;border:1px solid #315787;font-weight:500;font-size:14px}
-.notice{border-left:3px solid #e6bd68;padding:9px 12px;background:#302c2844;color:#e8d9b5;border-radius:0 10px 10px 0;font-size:12px;margin-top:12px}
-.hidden{display:none!important}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}.dialwrap{display:grid;place-items:center;padding:15px 0}.dial{width:min(76vw,320px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#238fff 0 35%,#1c477b 35% 100%);box-shadow:0 0 35px #148ee944;position:relative}.dial:before{content:"";position:absolute;inset:13px;border-radius:50%;background:radial-gradient(circle,#12346d,#071a43 68%);border:1px solid #2c5486}.dialcontent{position:relative;text-align:center}.hours{font-size:62px;font-weight:650;line-height:1.1}.unit{letter-spacing:5px;font-size:14px;color:#c7e9f7}.range{color:#a9c0e0;font-size:12px;margin-top:9px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.stat{border:1px solid #234879;background:#071b45aa;border-radius:14px;padding:12px;text-align:center}.stat strong{display:block;font-size:19px}.stat span{font-size:12px;color:var(--muted)}
-.blocks{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin:13px 0 5px}.slot{height:23px;border-radius:4px;background:#238fff}.slot.off{background:#18345d;border:1px solid #52709a}.slot.maybe{background:repeating-linear-gradient(135deg,#238fff 0 4px,#18345d 4px 8px)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.dot{display:inline-block;width:9px;height:9px;border-radius:3px;background:#238fff;margin-right:5px}.dot.off{background:#18345d;border:1px solid #52709a}
-.error{color:#ffb8a8;font-size:13px;margin-top:10px;white-space:pre-wrap}footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
-</style></head>
-<body><main class="wrap">
-<div class="head"><div class="brand">✧ Мереживо <span style="color:var(--cyan)">KYIV</span></div><span class="status" id="status">● перевірка джерела</span></div>
-<section class="hero"><h1>Мереживо</h1><div class="sub">ENERGY INTELLIGENCE</div><p>Weaving signals into foresight</p></section>
+:root{
+  color-scheme:dark;
+  --bg:#06163d;
+  --panel:#0b2458;
+  --line:#244879;
+  --cyan:#42d9f5;
+  --blue:#278cff;
+  --red:#ff586c;
+  --muted:#a7badb;
+  --white:#eef7ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(ellipse at 50% 15%,#123875 0,#081e4c 42%,#041332 100%);
+  color:var(--white);
+  font:16px/1.5 system-ui,sans-serif;
+  min-height:100vh
+}
+.wrap{width:min(100%,760px);margin:auto;padding:18px 16px 42px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-weight:750;letter-spacing:.4px}
+.status,.tag{
+  font-size:11px;color:#9cecff;border:1px solid #28618a;
+  border-radius:30px;padding:6px 10px
+}
+.hero{text-align:center;padding:20px 0}
+.hero h1{
+  font-size:clamp(38px,8vw,58px);font-weight:300;
+  letter-spacing:2px;margin:0;color:#dffaff
+}
+.hero .sub{letter-spacing:4px;font-size:11px;color:#8adcf0}
+.hero p{color:#b5c9e7;font-style:italic;margin:5px}
+.panel{
+  background:linear-gradient(145deg,rgba(13,42,93,.94),rgba(7,27,68,.96));
+  border:1px solid #234879;border-radius:20px;padding:18px;
+  margin:14px 0;box-shadow:0 12px 35px #020d2a66
+}
+h2{font-size:18px;margin:0 0 12px}
+.muted{color:var(--muted);font-size:13px}
+label{display:block;font-size:12px;color:#a9c5e7;margin:8px 0 5px}
+input{
+  width:100%;background:#061a43;border:1px solid #315787;
+  border-radius:12px;padding:13px;color:white;font:inherit;outline:none
+}
+input:focus{border-color:var(--cyan)}
+button{
+  border:0;border-radius:13px;background:linear-gradient(100deg,#138de8,#20c4e6);
+  color:#001b40;font-weight:750;font-size:15px;padding:13px 18px;
+  cursor:pointer;width:100%;margin-top:12px
+}
+button:disabled{opacity:.55;cursor:wait}
+.suggestions{display:grid;gap:6px;margin-top:7px}
+.suggestions button{
+  margin:0;text-align:left;background:#102e61;color:#e2f5ff;
+  border:1px solid #315787;font-weight:500;font-size:14px
+}
+.notice{
+  border-left:3px solid #e6bd68;padding:9px 12px;
+  background:#302c2844;color:#e8d9b5;border-radius:0 10px 10px 0;
+  font-size:12px;margin-top:12px
+}
+.hidden{display:none!important}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{
+  border:1px solid #234879;background:#071b45aa;
+  border-radius:14px;padding:12px;text-align:center
+}
+.stat strong{display:block;font-size:16px}
+.stat span{font-size:12px;color:var(--muted)}
+
+/* Круговий 24-годинний годинник */
+.clock-area{
+  display:flex;justify-content:center;align-items:center;
+  padding:12px 0 18px
+}
+.clock{
+  width:min(76vw,330px);
+  aspect-ratio:1;
+  border-radius:50%;
+  position:relative;
+  display:grid;
+  place-items:center;
+  box-shadow:0 0 38px #148ee933;
+  border:1px solid #315787;
+}
+.clock:before{
+  content:"";
+  position:absolute;
+  inset:12%;
+  border-radius:50%;
+  background:radial-gradient(circle,#12346d,#071a43 72%);
+  border:1px solid #2c5486;
+  z-index:1
+}
+.clock-center{
+  position:relative;
+  z-index:4;
+  text-align:center;
+  width:52%;
+  pointer-events:none
+}
+.clock-time{
+  font-size:clamp(31px,8vw,43px);
+  font-weight:650;
+  line-height:1.15;
+  color:#e8fbff;
+  font-variant-numeric:tabular-nums
+}
+.clock-caption{
+  font-size:10px;
+  letter-spacing:2px;
+  color:#a8d7ee;
+  margin-top:5px
+}
+.clock-date{font-size:11px;color:#8caed6;margin-top:5px}
+.clock-label{
+  position:absolute;
+  z-index:3;
+  color:#d5eaff;
+  font-size:11px;
+  font-weight:650;
+  text-shadow:0 1px 5px #00112f;
+  transform:translate(-50%,-50%)
+}
+.clock-label.l00{top:5%;left:50%}
+.clock-label.l06{top:50%;left:95%}
+.clock-label.l12{top:95%;left:50%}
+.clock-label.l18{top:50%;left:5%}
+.clock-hand{
+  position:absolute;
+  z-index:2;
+  left:calc(50% - 1px);
+  bottom:50%;
+  width:2px;
+  height:40%;
+  border-radius:5px;
+  background:#fff;
+  box-shadow:0 0 8px #42d9f5;
+  transform-origin:50% 100%;
+  pointer-events:none
+}
+.clock-hand:after{
+  content:"";
+  position:absolute;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--cyan);
+  left:50%;bottom:-4px;transform:translateX(-50%);
+  box-shadow:0 0 9px var(--cyan)
+}
+.clock-no-data{
+  width:100%;max-width:330px;
+  border:1px dashed #45658f;border-radius:50%;
+  aspect-ratio:1;display:grid;place-items:center;
+  text-align:center;padding:35px;color:var(--muted);
+  background:#071b45aa
+}
+
+/* Текстові інтервали */
+.intervals{display:grid;gap:7px;margin:0 0 18px}
+.interval{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:10px 12px;border-radius:11px;
+  background:#071b45aa;border:1px solid #234879;
+  font-size:13px
+}
+.interval-time{font-weight:700;font-variant-numeric:tabular-nums}
+.interval-state{font-size:12px;text-align:right}
+.interval.on .interval-state{color:var(--cyan)}
+.interval.off{border-color:#713e58;background:#351e3c88}
+.interval.off .interval-state{color:#ff8795}
+.interval.unknown .interval-state{color:#c3cce0}
+.legend{
+  display:flex;gap:14px;flex-wrap:wrap;
+  font-size:12px;color:var(--muted);margin:4px 0 15px
+}
+.dot{
+  display:inline-block;width:9px;height:9px;
+  border-radius:3px;background:#42d9f5;margin-right:5px
+}
+.dot.off{background:#ff586c}
+.dot.unknown{
+  background:repeating-linear-gradient(135deg,#9caac2 0 2px,#344766 2px 4px)
+}
+.error{color:#ffb8a8;font-size:13px;margin-top:10px;white-space:pre-wrap}
+footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
+@media(max-width:420px){
+  .panel{padding:15px}
+  .clock{width:min(78vw,300px)}
+  .interval{padding:9px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<div class="head">
+  <div class="brand">✧ Мереживо <span style="color:var(--cyan)">KYIV</span></div>
+  <span class="status" id="status">● перевірка джерела</span>
+</div>
+
+<section class="hero">
+  <h1>Мереживо</h1>
+  <div class="sub">ENERGY INTELLIGENCE</div>
+  <p>Weaving signals into foresight</p>
+</section>
+
 <section class="panel">
-<h2>Знайти свій будинок</h2>
-<label for="street">Вулиця у Києві</label><input id="street" placeholder="Введіть щонайменше 3 літери" autocomplete="off">
-<div class="suggestions hidden" id="streetList"></div>
-<label for="house">Номер будинку</label><input id="house" placeholder="Наприклад, 25" autocomplete="off" disabled>
-<div class="suggestions hidden" id="houseList"></div>
-<button id="lookup" disabled>Отримати графік будинку</button>
-<div class="error" id="error"></div>
-<div class="notice">Сервіс отримує графік з відкритого API YASNO для ДТЕК Київські електромережі. Якщо джерело не відповідає або не публікує графік, ми покажемо це прямо, без вигаданих годин.</div>
+  <h2>Знайти свій будинок</h2>
+
+  <label for="street">Вулиця у Києві</label>
+  <input id="street" placeholder="Введіть щонайменше 3 літери" autocomplete="off">
+  <div class="suggestions hidden" id="streetList"></div>
+
+  <label for="house">Номер будинку</label>
+  <input id="house" placeholder="Наприклад, 25" autocomplete="off" disabled>
+  <div class="suggestions hidden" id="houseList"></div>
+
+  <button id="lookup" disabled>Отримати графік будинку</button>
+  <div class="error" id="error"></div>
+
+  <div class="notice">
+    Сервіс отримує графік з відкритого API YASNO для ДТЕК Київські електромережі.
+    Якщо джерело не відповідає або не публікує графік, ми покажемо це прямо,
+    без вигаданих годин.
+  </div>
 </section>
+
 <section class="panel hidden" id="result" aria-live="polite">
-<div class="topline"><div><div class="muted">ОБРАНА АДРЕСА</div><strong id="address"></strong></div><span class="tag" id="group">Група —</span></div>
-<div class="stats" style="margin-top:15px"><div class="stat"><strong id="todayStatus">—</strong><span>Статус на сьогодні</span></div><div class="stat"><strong id="tomorrowStatus">—</strong><span>Статус на завтра</span></div></div>
-<h2 style="margin-top:20px">Сьогодні</h2><div class="blocks" id="todayBlocks"></div><div class="legend"><span><i class="dot"></i>За графіком є світло</span><span><i class="dot off"></i>Заплановане обмеження</span></div>
-<h2 style="margin-top:22px">Завтра</h2><div class="blocks" id="tomorrowBlocks"></div>
-<p class="muted" id="updated" style="margin-top:12px"></p><p class="muted" id="forecastNote"></p>
+  <div class="topline">
+    <div>
+      <div class="muted">ОБРАНА АДРЕСА</div>
+      <strong id="address"></strong>
+    </div>
+    <span class="tag" id="group">Група —</span>
+  </div>
+
+  <div class="stats" style="margin-top:15px">
+    <div class="stat">
+      <strong id="todayStatus">—</strong>
+      <span>Статус на сьогодні</span>
+    </div>
+    <div class="stat">
+      <strong id="tomorrowStatus">—</strong>
+      <span>Статус на завтра</span>
+    </div>
+  </div>
+
+  <h2 style="margin-top:22px">Сьогодні</h2>
+  <div class="clock-area">
+    <div id="todayClock" class="clock-no-data">Очікуємо графік</div>
+  </div>
+  <div class="legend">
+    <span><i class="dot"></i>Світло є</span>
+    <span><i class="dot off"></i>Відключення</span>
+    <span><i class="dot unknown"></i>Невідомо</span>
+  </div>
+  <div class="intervals" id="todayIntervals"></div>
+
+  <h2 style="margin-top:22px">Завтра</h2>
+  <div class="clock-area">
+    <div id="tomorrowClock" class="clock-no-data">Очікуємо графік</div>
+  </div>
+  <div class="intervals" id="tomorrowIntervals"></div>
+
+  <p class="muted" id="updated" style="margin-top:12px"></p>
+  <p class="muted" id="forecastNote"></p>
 </section>
-<footer>Мереживо KYIV · незалежний інформаційний сервіс<br>Не є офіційним ресурсом ДТЕК або YASNO. Графік може змінюватися.</footer>
+
+<footer>
+  Мереживо KYIV · незалежний інформаційний сервіс<br>
+  Не є офіційним ресурсом ДТЕК або YASNO. Графік може змінюватися.
+</footer>
+
 </main>
+
 <script>
 const $=id=>document.getElementById(id);
-let chosenStreet=null, chosenHouse=null, debounce;
-async function api(path){const r=await fetch(path);const j=await r.json();if(!r.ok)throw new Error(j.error||`HTTP ${r.status}`);return j}
-function arr(x){if(Array.isArray(x))return x;if(Array.isArray(x?.data))return x.data;if(Array.isArray(x?.items))return x.items;return []}
-function showList(el,items,handler,label){el.innerHTML='';if(!items.length){el.classList.add('hidden');return}items.forEach(item=>{const b=document.createElement('button');b.textContent=label(item);b.onclick=()=>handler(item);el.append(b)});el.classList.remove('hidden')}
-$('street').addEventListener('input',()=>{clearTimeout(debounce);chosenStreet=null;chosenHouse=null;$('house').value='';$('house').disabled=true;$('lookup').disabled=true;$('houseList').classList.add('hidden');const q=$('street').value.trim();if(q.length<3){$('streetList').classList.add('hidden');return}debounce=setTimeout(async()=>{try{const data=arr(await api('/api/streets?q='+encodeURIComponent(q)));showList($('streetList'),data,item=>{chosenStreet=item;$('street').value=item.value||item.name||item.streetName||item.title||q;$('streetList').classList.add('hidden');$('house').disabled=false;$('house').focus()},item=>item.value||item.streetName||item.title||'Вулиця')}catch(e){$('error').textContent=e.message}},350)});
-$('house').addEventListener('input',()=>{clearTimeout(debounce);chosenHouse=null;$('lookup').disabled=true;const q=$('house').value.trim();if(!chosenStreet||!q)return;debounce=setTimeout(async()=>{try{const data=arr(await api('/api/houses?streetId='+encodeURIComponent(chosenStreet.id||chosenStreet.streetId)+'&q='+encodeURIComponent(q)));showList($('houseList'),data,item=>{chosenHouse=item;$('house').value=item.name||item.value||item.houseName||item.number||item.house||q;$('houseList').classList.add('hidden');$('lookup').disabled=false},item=>item.value||item.houseName||item.number||item.house||'Будинок')}catch(e){$('error').textContent=e.message}},300)});
-function stateLabel(s){return ({ScheduleApplies:'Графік опубліковано',WaitingForSchedule:'Ще не опубліковано',NoOutages:'Без планових обмежень',EmergencyShutdowns:'Екстрені відключення'})[s]||s||'Дані відсутні'}
-function drawSlots(id,day){const el=$(id);el.innerHTML='';const slots=day?.slots||[];if(!slots.length){el.innerHTML='<span class="muted" style="grid-column:1/-1">Немає опублікованих інтервалів</span>';return}
-const minutes=24*60;for(let h=0;h<24;h++){const a=h*60,b=(h+1)*60;let kind='on';for(const s of slots){if(Math.max(a,s.start)<Math.min(b,s.end)){if(s.type==='Definite'||s.type==='NotPlanned')kind=s.type==='Definite'?'off':'on';else if(String(s.type).toLowerCase().includes('prob'))kind='maybe';}}const cell=document.createElement('span');cell.className='slot'+(kind==='off'?' off':kind==='maybe'?' maybe':'');cell.title=`${String(h).padStart(2,'0')}:00`;el.append(cell)}}
-$('lookup').onclick=async()=>{if(!chosenStreet||!chosenHouse)return;$('error').textContent='';$('lookup').disabled=true;$('lookup').textContent='Завантаження…';try{
-const sid=chosenStreet.id??chosenStreet.streetId;const hid=chosenHouse.id??chosenHouse.houseId;
-const [groupData,schedule]=await Promise.all([api(`/api/group?streetId=${encodeURIComponent(sid)}&houseId=${encodeURIComponent(hid)}`),api('/api/schedule')]);
-const group=groupData.group??groupData.data?.group;const subgroup=groupData.subgroup??groupData.data?.subgroup;
-const key=group!=null?`${group}.${subgroup??1}`:null;const record=key?(schedule[key]||schedule.data?.[key]):null;
-$('address').textContent=`Київ, ${$('street').value}, ${$('house').value}`;$('group').textContent=key?`Група ${key}`:'Групу не визначено';
-if(record){$('todayStatus').textContent=stateLabel(record.today?.status);$('tomorrowStatus').textContent=stateLabel(record.tomorrow?.status);drawSlots('todayBlocks',record.today);drawSlots('tomorrowBlocks',record.tomorrow);$('updated').textContent=record.updatedOn?`Оновлено джерелом: ${new Date(record.updatedOn).toLocaleString('uk-UA')}`:'Час оновлення не надано';$('forecastNote').textContent='Це офіційно опублікований графік джерела, а не гарантія фактичного електропостачання. Можливі аварійні та екстрені зміни.'}
-else{$('todayStatus').textContent='Немає даних';$('tomorrowStatus').textContent='Немає даних';$('todayBlocks').innerHTML='<span class="muted">Для цієї групи графік не знайдено або формат відповіді змінився.</span>';$('tomorrowBlocks').innerHTML='';$('updated').textContent='';$('forecastNote').textContent='Звірте адресу на офіційному сайті ДТЕК.'}
-$('result').classList.remove('hidden');$('result').scrollIntoView({behavior:'smooth'});
-}catch(e){$('error').textContent='Помилка отримання графіка: '+e.message+'\nПеревірте адресу або спробуйте пізніше.'}finally{$('lookup').disabled=false;$('lookup').textContent='Отримати графік будинку'}};
-api('/api/health').then(()=> $('status').textContent='● API доступний').catch(()=> $('status').textContent='● сервер не підключено');
-</script></body></html>
+
+let chosenStreet=null;
+let chosenHouse=null;
+let debounce;
+let clockTimer=null;
+
+async function api(path){
+  const r=await fetch(path);
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error||`HTTP ${r.status}`);
+  return j;
+}
+
+function arr(x){
+  if(Array.isArray(x))return x;
+  if(Array.isArray(x?.data))return x.data;
+  if(Array.isArray(x?.items))return x.items;
+  return [];
+}
+
+function showList(el,items,handler,label){
+  el.innerHTML='';
+  if(!items.length){
+    el.classList.add('hidden');
+    return;
+  }
+  items.forEach(item=>{
+    const b=document.createElement('button');
+    b.textContent=label(item);
+    b.onclick=()=>handler(item);
+    el.append(b);
+  });
+  el.classList.remove('hidden');
+}
+
+function stateLabel(s){
+  return ({
+    ScheduleApplies:'Графік опубліковано',
+    WaitingForSchedule:'Ще не опубліковано',
+    NoOutages:'Без планових обмежень',
+    EmergencyShutdowns:'Екстрені відключення'
+  })[s]||s||'Дані відсутні';
+}
+
+function timeText(minutes){
+  const h=Math.floor(minutes/60);
+  const m=minutes%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
+function slotKind(type){
+  if(type==='NotPlanned')return 'on';
+  if(type==='Definite')return 'off';
+  return 'unknown';
+}
+
+function makeClock(id,day,isToday){
+  const el=$(id);
+  const slots=day?.slots||[];
+
+  if(!slots.length){
+    el.className='clock-no-data';
+    el.innerHTML=day?.status==='WaitingForSchedule'
+      ?'Графік ще не опубліковано'
+      :'Немає опублікованих інтервалів';
+    return;
+  }
+
+  const sorted=[...slots].sort((a,b)=>a.start-b.start);
+  const colors={
+    on:'#24c9d9',
+    off:'#ff586c',
+    unknown:'#697b9b'
+  };
+
+  let stops=[];
+  let cursor=0;
+
+  sorted.forEach(s=>{
+    const start=Math.max(0,Math.min(1440,s.start));
+    const end=Math.max(start,Math.min(1440,s.end));
+
+    if(start>cursor){
+      stops.push(`${colors.unknown} ${cursor/1440*100}% ${start/1440*100}%`);
+    }
+
+    const kind=slotKind(s.type);
+    stops.push(`${colors[kind]} ${start/1440*100}% ${end/1440*100}%`);
+    cursor=Math.max(cursor,end);
+  });
+
+  if(cursor<1440){
+    stops.push(`${colors.unknown} ${cursor/1440*100}% 100%`);
+  }
+
+  el.className='clock';
+  el.innerHTML=`
+    <span class="clock-label l00">00</span>
+    <span class="clock-label l06">06</span>
+    <span class="clock-label l12">12</span>
+    <span class="clock-label l18">18</span>
+    <div class="clock-hand" id="${id}Hand"></div>
+    <div class="clock-center">
+      <div class="clock-time" id="${id}Time">${isToday?'--:--':'24 ГОД'}</div>
+      <div class="clock-caption">${isToday?'ПОТОЧНИЙ ЧАС':'ГРАФІК НА ЗАВТРА'}</div>
+      <div class="clock-date">${day.date?new Date(day.date).toLocaleDateString('uk-UA') : ''}</div>
+    </div>
+  `;
+
+  el.style.background=`conic-gradient(from 0deg,${stops.join(',')})`;
+
+  if(isToday)updateClockHand(id);
+}
+
+function updateClockHand(id){
+  const hand=$(id+'Hand');
+  const time=$(id+'Time');
+  if(!hand||!time)return;
+
+  const now=new Date();
+  const minutes=now.getHours()*60+now.getMinutes();
+  const angle=minutes/1440*360;
+
+  hand.style.transform=`rotate(${angle}deg)`;
+  time.textContent=
+    String(now.getHours()).padStart(2,'0')+':'+
+    String(now.getMinutes()).padStart(2,'0');
+}
+
+function drawIntervals(id,day){
+  const el=$(id);
+  el.innerHTML='';
+  const slots=day?.slots||[];
+
+  if(!slots.length){
+    const msg=document.createElement('div');
+    msg.className='muted';
+    msg.textContent=day?.status==='WaitingForSchedule'
+      ?'Розклад на цей день ще не опублікований.'
+      :'Немає опублікованих інтервалів.';
+    el.append(msg);
+    return;
+  }
+
+  const sorted=[...slots].sort((a,b)=>a.start-b.start);
+
+  sorted.forEach(s=>{
+    const kind=slotKind(s.type);
+    const item=document.createElement('div');
+    item.className='interval '+kind;
+
+    const time=document.createElement('span');
+    time.className='interval-time';
+    time.textContent=timeText(s.start)+' — '+timeText(s.end);
+
+    const state=document.createElement('span');
+    state.className='interval-state';
+
+    if(kind==='off')state.textContent='● Відключення';
+    else if(kind==='on')state.textContent='● Світло є';
+    else state.textContent='● Невідомо';
+
+    item.append(time,state);
+    el.append(item);
+  });
+}
+
+function drawDay(clockId,intervalId,day,isToday){
+  makeClock(clockId,day,isToday);
+  drawIntervals(intervalId,day);
+}
+
+$('street').addEventListener('input',()=>{
+  clearTimeout(debounce);
+  chosenStreet=null;
+  chosenHouse=null;
+  $('house').value='';
+  $('house').disabled=true;
+  $('lookup').disabled=true;
+  $('houseList').classList.add('hidden');
+
+  const q=$('street').value.trim();
+
+  if(q.length<3){
+    $('streetList').classList.add('hidden');
+    return;
+  }
+
+  debounce=setTimeout(async()=>{
+    try{
+      const data=arr(await api('/api/streets?q='+encodeURIComponent(q)));
+      showList(
+        $('streetList'),
+        data,
+        item=>{
+          chosenStreet=item;
+          $('street').value=item.value||item.name||item.streetName||item.title||q;
+          $('streetList').classList.add('hidden');
+          $('house').disabled=false;
+          $('house').focus();
+        },
+        item=>item.value||item.name||item.streetName||item.title||'Вулиця'
+      );
+    }catch(e){
+      $('error').textContent=e.message;
+    }
+  },350);
+});
+
+$('house').addEventListener('input',()=>{
+  clearTimeout(debounce);
+  chosenHouse=null;
+  $('lookup').disabled=true;
+
+  const q=$('house').value.trim();
+  if(!chosenStreet||!q)return;
+
+  debounce=setTimeout(async()=>{
+    try{
+      const data=arr(await api(
+        '/api/houses?streetId='+
+        encodeURIComponent(chosenStreet.id||chosenStreet.streetId)+
+        '&q='+encodeURIComponent(q)
+      ));
+
+      showList(
+        $('houseList'),
+        data,
+        item=>{
+          chosenHouse=item;
+          $('house').value=item.value||item.name||item.houseName||
+            item.number||item.house||q;
+          $('houseList').classList.add('hidden');
+          $('lookup').disabled=false;
+        },
+        item=>item.value||item.name||item.houseName||
+          item.number||item.house||'Будинок'
+      );
+    }catch(e){
+      $('error').textContent=e.message;
+    }
+  },300);
+});
+
+$('lookup').onclick=async()=>{
+  if(!chosenStreet||!chosenHouse)return;
+
+  $('error').textContent='';
+  $('lookup').disabled=true;
+  $('lookup').textContent='Завантаження…';
+
+  try{
+    const sid=chosenStreet.id??chosenStreet.streetId;
+    const hid=chosenHouse.id??chosenHouse.houseId;
+
+    const [groupData,schedule]=await Promise.all([
+      api(`/api/group?streetId=${encodeURIComponent(sid)}&houseId=${encodeURIComponent(hid)}`),
+      api('/api/schedule')
+    ]);
+
+    const group=groupData.group??groupData.data?.group;
+    const subgroup=groupData.subgroup??groupData.data?.subgroup;
+    const key=group!=null?`${group}.${subgroup??1}`:null;
+    const record=key?(schedule[key]||schedule.data?.[key]):null;
+
+    $('address').textContent=`Київ, ${$('street').value}, ${$('house').value}`;
+    $('group').textContent=key?`Група ${key}`:'Групу не визначено';
+
+    if(record){
+      $('todayStatus').textContent=stateLabel(record.today?.status);
+      $('tomorrowStatus').textContent=stateLabel(record.tomorrow?.status);
+
+      drawDay('todayClock','todayIntervals',record.today,true);
+      drawDay('tomorrowClock','tomorrowIntervals',record.tomorrow,false);
+
+      $('updated').textContent=record.updatedOn
+        ?`Оновлено джерелом: ${new Date(record.updatedOn).toLocaleString('uk-UA')}`
+        :'Час оновлення не надано';
+
+      $('forecastNote').textContent=
+        'Це офіційно опублікований графік джерела, а не гарантія фактичного електропостачання. Можливі аварійні та екстрені зміни.';
+
+      if(clockTimer)clearInterval(clockTimer);
+      clockTimer=setInterval(()=>{
+        updateClockHand('todayClock');
+      },10000);
+
+    }else{
+      $('todayStatus').textContent='Немає даних';
+      $('tomorrowStatus').textContent='Немає даних';
+
+      drawDay('todayClock','todayIntervals',null,true);
+      drawDay('tomorrowClock','tomorrowIntervals',null,false);
+
+      $('updated').textContent='';
+      $('forecastNote').textContent=
+        'Для цієї групи графік не знайдено або формат відповіді змінився. Звірте адресу на офіційному сайті ДТЕК.';
+    }
+
+    $('result').classList.remove('hidden');
+    $('result').scrollIntoView({behavior:'smooth'});
+
+  }catch(e){
+    $('error').textContent=
+      'Помилка отримання графіка: '+e.message+
+      '\nПеревірте адресу або спробуйте пізніше.';
+  }finally{
+    $('lookup').disabled=false;
+    $('lookup').textContent='Отримати графік будинку';
+  }
+};
+
+api('/api/health')
+  .then(()=> $('status').textContent='● API доступний')
+  .catch(()=> $('status').textContent='● сервер не підключено');
+</script>
+</body>
+</html>
