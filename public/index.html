@@ -54,7 +54,7 @@ button:disabled{opacity:.55;cursor:wait}
 .stat strong{display:block;font-size:16px}
 .stat span{font-size:12px;color:var(--muted)}
 
-/* Годинник: одне кільце, збільшені цифри */
+/* Годинник */
 .clock-area{display:flex;justify-content:center;align-items:center;padding:12px 0 18px}
 .clock{
   width:min(82vw,360px);aspect-ratio:1;border-radius:50%;position:relative;
@@ -298,21 +298,41 @@ function makeClock(id,day,isToday){
     </div>`;
   if(isToday)updateClockHand(id);
 }
+
+/* Правильний аналоговий годинник та часова зона Києва */
 function updateClockHand(id){
   const hourHand=$(id+'HourHand');
   const minuteHand=$(id+'MinuteHand');
   const time=$(id+'Time');
   if(!hourHand||!minuteHand||!time)return;
-  const now=new Date();
-  const hours=now.getHours();
-  const minutes=now.getMinutes();
-  const seconds=now.getSeconds();
-  const hourAngle=hours*15;
-  const minuteAngle=(hours+minutes/60+seconds/3600)*15;
+
+  const parts=new Intl.DateTimeFormat('en-GB',{
+    timeZone:'Europe/Kyiv',
+    hour:'2-digit',
+    minute:'2-digit',
+    second:'2-digit',
+    hourCycle:'h23'
+  }).formatToParts(new Date());
+
+  const value=type=>Number(parts.find(p=>p.type===type)?.value||0);
+  const hours=value('hour');
+  const minutes=value('minute');
+  const seconds=value('second');
+
+  // Годинна стрілка: 30 градусів за годину
+  const hourAngle=(hours%12+minutes/60+seconds/3600)*30;
+
+  // Хвилинна стрілка: 6 градусів за хвилину
+  const minuteAngle=(minutes+seconds/60)*6;
+
   hourHand.style.transform=`rotate(${hourAngle}deg)`;
   minuteHand.style.transform=`rotate(${minuteAngle}deg)`;
-  time.textContent=String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0');
+
+  time.textContent=
+    String(hours).padStart(2,'0')+':'+
+    String(minutes).padStart(2,'0');
 }
+
 function drawIntervals(id,day){
   const el=$(id);
   el.innerHTML='';
@@ -431,6 +451,10 @@ $('lookup').onclick=async()=>{
       drawDay('tomorrowClock','tomorrowIntervals',null,false);
       $('updated').textContent='';
       $('forecastNote').textContent='Для цієї групи графік не знайдено або формат відповіді змінився. Звірте адресу на офіційному сайті ДТЕК.';
+      if(clockTimer){
+        clearInterval(clockTimer);
+        clockTimer=null;
+      }
     }
     $('result').classList.remove('hidden');
     $('result').scrollIntoView({behavior:'smooth'});
