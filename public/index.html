@@ -81,7 +81,7 @@ button:disabled{opacity:.55;cursor:wait}
 .stat strong{display:block;font-size:16px}
 .stat span{font-size:12px;color:var(--muted)}
 
-/* Аналоговий годинник: одна шкала 0–12 */
+/* Аналоговий годинник: одне кільце, шкала 1–12 */
 .clock-area{
   display:flex;
   justify-content:center;
@@ -160,7 +160,7 @@ button:disabled{opacity:.55;cursor:wait}
 .hour-hand{
   z-index:2;
   width:6px;
-  height:22%;
+  height:30%;
   margin-left:-3px;
   background:linear-gradient(to top,#42d9f5,#e9fbff);
   box-shadow:0 0 8px #42d9f5aa
@@ -405,12 +405,7 @@ function ringSector(cx,cy,rOuter,rInner,startAngle,endAngle,color){
     Z" fill="${color}" />`;
 }
 
-/*
-  Один циферблат з цифрами 1–12.
-  Зовнішня частина кольорової доріжки — 00:00–12:00.
-  Внутрішня частина тієї самої доріжки — 12:00–24:00.
-  Цифри та годинна шкала лише одні.
-*/
+/* Одне кільце для всіх 24 годин */
 function clockFace(slots){
   const cx=170,cy=170;
   const colors={
@@ -423,54 +418,31 @@ function clockFace(slots){
     <svg class="clock-svg" viewBox="0 0 340 340" aria-hidden="true">
       <circle cx="170" cy="170" r="157"
         fill="#06183e" stroke="#42658f" stroke-width="1.5"/>
-
       <circle cx="170" cy="170" r="145"
-        fill="none" stroke="#203e69" stroke-width="22"/>
-
-      <circle cx="170" cy="170" r="116"
         fill="none" stroke="#203e69" stroke-width="22"/>
   `;
 
   const sorted=[...(slots||[])].sort((a,b)=>a.start-b.start);
 
+  // Одне кольорове кільце на всі 24 години
   sorted.forEach(s=>{
     const start=Math.max(0,Math.min(1440,s.start));
     const end=Math.max(start,Math.min(1440,s.end));
-    const color=colors[slotKind(s.type)];
+    if(end<=start)return;
 
-    /* Перша половина доби */
-    const firstStart=Math.max(start,0);
-    const firstEnd=Math.min(end,720);
-
-    if(firstEnd>firstStart){
-      svg+=ringSector(
-        cx,cy,156,134,
-        firstStart/720*360,
-        firstEnd/720*360,
-        color
-      );
-    }
-
-    /* Друга половина доби */
-    const secondStart=Math.max(start,720);
-    const secondEnd=Math.min(end,1440);
-
-    if(secondEnd>secondStart){
-      svg+=ringSector(
-        cx,cy,127,105,
-        (secondStart-720)/720*360,
-        (secondEnd-720)/720*360,
-        color
-      );
-    }
+    svg+=ringSector(
+      cx,cy,156,134,
+      start/1440*360,
+      end/1440*360,
+      colors[slotKind(s.type)]
+    );
   });
 
-  /* Одна шкала 0–12 */
+  // Цифри 1–12 на зовнішньому краї
   for(let i=0;i<12;i++){
     const angle=i*30;
-
     const p1=polar(cx,cy,157,angle);
-    const p2=polar(cx,cy,i%3===0?119:127,angle);
+    const p2=polar(cx,cy,150,angle);
 
     svg+=`<line
       x1="${p1.x}" y1="${p1.y}"
@@ -479,7 +451,7 @@ function clockFace(slots){
       stroke-width="${i%3===0?2.5:1.3}"
       stroke-linecap="round"/>`;
 
-    const label=polar(cx,cy,87,angle);
+    const label=polar(cx,cy,165,angle);
 
     svg+=`<text
       x="${label.x}" y="${label.y}"
@@ -488,13 +460,13 @@ function clockFace(slots){
     </text>`;
   }
 
-  /* Додаткові поділки між годинами */
+  // Хвилинні поділки
   for(let i=0;i<60;i++){
     if(i%5===0)continue;
 
     const angle=i*6;
     const p1=polar(cx,cy,157,angle);
-    const p2=polar(cx,cy,151,angle);
+    const p2=polar(cx,cy,153,angle);
 
     svg+=`<line
       x1="${p1.x}" y1="${p1.y}"
@@ -550,7 +522,7 @@ function makeClock(id,day,isToday){
   if(isToday)updateClockHand(id);
 }
 
-/* Годинна та хвилинна стрілки */
+/* Рух стрілок відповідно до 24-годинного кола */
 function updateClockHand(id){
   const hourHand=$(id+'HourHand');
   const minuteHand=$(id+'MinuteHand');
@@ -559,18 +531,18 @@ function updateClockHand(id){
   if(!hourHand||!minuteHand||!time)return;
 
   const now=new Date();
-  const hours=now.getHours()%12;
+  const hours=now.getHours();
   const minutes=now.getMinutes();
   const seconds=now.getSeconds();
 
-  const minuteAngle=(minutes+seconds/60)*6;
-  const hourAngle=(hours+minutes/60+seconds/3600)*30;
+  const hourAngle=hours*15;
+  const minuteAngle=(hours+minutes/60+seconds/3600)*15;
 
-  minuteHand.style.transform=`rotate(${minuteAngle}deg)`;
   hourHand.style.transform=`rotate(${hourAngle}deg)`;
+  minuteHand.style.transform=`rotate(${minuteAngle}deg)`;
 
   time.textContent=
-    String(now.getHours()).padStart(2,'0')+':'+
+    String(hours).padStart(2,'0')+':'+
     String(minutes).padStart(2,'0');
 }
 
