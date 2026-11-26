@@ -1,0 +1,9 @@
+{
+  "name": "Мереживо KYIV",
+  "short_name": "Мереживо",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06163d",
+  "theme_color": "#071b4b",
+  "lang": "uk"
+}
