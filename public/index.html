@@ -7,39 +7,25 @@
 <meta name="theme-color" content="#071b4b">
 <link rel="manifest" href="/manifest.webmanifest">
 <title>Мереживо KYIV — графік електропостачання</title>
-
 <style>
 :root{
   color-scheme:dark;
-  --bg:#06163d;
-  --panel:#0b2458;
-  --line:#244879;
-  --cyan:#42d9f5;
-  --blue:#278cff;
-  --red:#ff586c;
-  --muted:#a7badb;
-  --white:#eef7ff;
+  --bg:#06163d;--panel:#0b2458;--line:#244879;
+  --cyan:#42d9f5;--blue:#278cff;--red:#ff586c;
+  --muted:#a7badb;--white:#eef7ff;
 }
 *{box-sizing:border-box}
 body{
   margin:0;
   background:radial-gradient(ellipse at 50% 15%,#123875 0,#081e4c 42%,#041332 100%);
-  color:var(--white);
-  font:16px/1.5 system-ui,sans-serif;
-  min-height:100vh
+  color:var(--white);font:16px/1.5 system-ui,sans-serif;min-height:100vh
 }
 .wrap{width:min(100%,760px);margin:auto;padding:18px 16px 42px}
 .head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .brand{font-weight:750;letter-spacing:.4px}
-.status,.tag{
-  font-size:11px;color:#9cecff;border:1px solid #28618a;
-  border-radius:30px;padding:6px 10px
-}
+.status,.tag{font-size:11px;color:#9cecff;border:1px solid #28618a;border-radius:30px;padding:6px 10px}
 .hero{text-align:center;padding:20px 0}
-.hero h1{
-  font-size:clamp(38px,8vw,58px);font-weight:300;
-  letter-spacing:2px;margin:0;color:#dffaff
-}
+.hero h1{font-size:clamp(38px,8vw,58px);font-weight:300;letter-spacing:2px;margin:0;color:#dffaff}
 .hero .sub{letter-spacing:4px;font-size:11px;color:#8adcf0}
 .hero p{color:#b5c9e7;font-style:italic;margin:5px}
 .panel{
@@ -50,10 +36,7 @@ body{
 h2{font-size:18px;margin:0 0 12px}
 .muted{color:var(--muted);font-size:13px}
 label{display:block;font-size:12px;color:#a9c5e7;margin:8px 0 5px}
-input{
-  width:100%;background:#061a43;border:1px solid #315787;
-  border-radius:12px;padding:13px;color:white;font:inherit;outline:none
-}
+input{width:100%;background:#061a43;border:1px solid #315787;border-radius:12px;padding:13px;color:white;font:inherit;outline:none}
 input:focus{border-color:var(--cyan)}
 button{
   border:0;border-radius:13px;background:linear-gradient(100deg,#138de8,#20c4e6);
@@ -62,184 +45,64 @@ button{
 }
 button:disabled{opacity:.55;cursor:wait}
 .suggestions{display:grid;gap:6px;margin-top:7px}
-.suggestions button{
-  margin:0;text-align:left;background:#102e61;color:#e2f5ff;
-  border:1px solid #315787;font-weight:500;font-size:14px
-}
-.notice{
-  border-left:3px solid #e6bd68;padding:9px 12px;
-  background:#302c2844;color:#e8d9b5;border-radius:0 10px 10px 0;
-  font-size:12px;margin-top:12px
-}
+.suggestions button{margin:0;text-align:left;background:#102e61;color:#e2f5ff;border:1px solid #315787;font-weight:500;font-size:14px}
+.notice{border-left:3px solid #e6bd68;padding:9px 12px;background:#302c2844;color:#e8d9b5;border-radius:0 10px 10px 0;font-size:12px;margin-top:12px}
 .hidden{display:none!important}
 .topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.stat{
-  border:1px solid #234879;background:#071b45aa;
-  border-radius:14px;padding:12px;text-align:center
-}
+.stat{border:1px solid #234879;background:#071b45aa;border-radius:14px;padding:12px;text-align:center}
 .stat strong{display:block;font-size:16px}
 .stat span{font-size:12px;color:var(--muted)}
 
-/* Аналоговий годинник: одне кільце, шкала 1–12 */
-.clock-area{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:12px 0 18px
-}
+/* Годинник: одне кільце, збільшені цифри */
+.clock-area{display:flex;justify-content:center;align-items:center;padding:12px 0 18px}
 .clock{
-  width:min(82vw,360px);
-  aspect-ratio:1;
-  border-radius:50%;
-  position:relative;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
+  width:min(82vw,360px);aspect-ratio:1;border-radius:50%;position:relative;
+  display:grid;place-items:center;overflow:hidden;
   background:radial-gradient(circle,#102e62 0,#071a43 72%);
-  border:1px solid #315787;
-  box-shadow:0 0 38px #148ee933,inset 0 0 25px #020d2a99
+  border:1px solid #315787;box-shadow:0 0 38px #148ee933,inset 0 0 25px #020d2a99
 }
-.clock-svg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:1
-}
+.clock-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible}
 .clock-svg text{
-  font-family:system-ui,sans-serif;
-  font-weight:750;
-  text-anchor:middle;
-  dominant-baseline:middle;
-  fill:#e5f5ff;
-  paint-order:stroke;
-  stroke:#071a43;
-  stroke-width:2px;
-  stroke-linejoin:round
+  font-family:system-ui,sans-serif;font-weight:750;text-anchor:middle;
+  dominant-baseline:middle;fill:#e5f5ff;paint-order:stroke;
+  stroke:#071a43;stroke-width:2px;stroke-linejoin:round
 }
 .clock-center{
-  position:absolute;
-  z-index:4;
-  width:43%;
-  height:43%;
-  border-radius:50%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  background:radial-gradient(circle,#12346d,#071a43 75%);
-  border:1px solid #315787;
-  box-shadow:0 0 18px #020d2a99;
-  pointer-events:none
+  position:absolute;z-index:4;width:43%;height:43%;border-radius:50%;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;background:radial-gradient(circle,#12346d,#071a43 75%);
+  border:1px solid #315787;box-shadow:0 0 18px #020d2a99;pointer-events:none
 }
-.clock-time{
-  font-size:clamp(25px,7vw,38px);
-  font-weight:700;
-  line-height:1.1;
-  color:#e8fbff;
-  font-variant-numeric:tabular-nums
-}
-.clock-caption{
-  font-size:9px;
-  letter-spacing:1.5px;
-  color:#a8d7ee;
-  margin-top:5px
-}
+.clock-time{font-size:clamp(25px,7vw,38px);font-weight:700;line-height:1.1;color:#e8fbff;font-variant-numeric:tabular-nums}
+.clock-caption{font-size:9px;letter-spacing:1.5px;color:#a8d7ee;margin-top:5px}
 .clock-date{font-size:10px;color:#8caed6;margin-top:4px}
+.clock-hand{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:10px;pointer-events:none}
+.hour-hand{z-index:2;width:6px;height:30%;margin-left:-3px;background:linear-gradient(to top,#42d9f5,#e9fbff);box-shadow:0 0 8px #42d9f5aa}
+.minute-hand{z-index:3;width:3px;height:34%;margin-left:-1.5px;background:#fff;box-shadow:0 0 7px #fff9}
+.clock-pin{position:absolute;z-index:5;left:50%;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:var(--cyan);border:2px solid #eaffff;box-shadow:0 0 10px var(--cyan);pointer-events:none}
+.clock-no-data{width:100%;max-width:330px;border:1px dashed #45658f;border-radius:50%;aspect-ratio:1;display:grid;place-items:center;text-align:center;padding:35px;color:var(--muted);background:#071b45aa}
 
-.clock-hand{
-  position:absolute;
-  left:50%;
-  bottom:50%;
-  transform-origin:50% 100%;
-  border-radius:10px;
-  pointer-events:none
-}
-.hour-hand{
-  z-index:2;
-  width:6px;
-  height:30%;
-  margin-left:-3px;
-  background:linear-gradient(to top,#42d9f5,#e9fbff);
-  box-shadow:0 0 8px #42d9f5aa
-}
-.minute-hand{
-  z-index:3;
-  width:3px;
-  height:34%;
-  margin-left:-1.5px;
-  background:#fff;
-  box-shadow:0 0 7px #fff9
-}
-.clock-pin{
-  position:absolute;
-  z-index:5;
-  left:50%;
-  top:50%;
-  width:13px;
-  height:13px;
-  margin:-6.5px 0 0 -6.5px;
-  border-radius:50%;
-  background:var(--cyan);
-  border:2px solid #eaffff;
-  box-shadow:0 0 10px var(--cyan);
-  pointer-events:none
-}
-.clock-no-data{
-  width:100%;
-  max-width:330px;
-  border:1px dashed #45658f;
-  border-radius:50%;
-  aspect-ratio:1;
-  display:grid;
-  place-items:center;
-  text-align:center;
-  padding:35px;
-  color:var(--muted);
-  background:#071b45aa
-}
-
-/* Текстові інтервали */
+/* Інтервали */
 .intervals{display:grid;gap:7px;margin:0 0 18px}
-.interval{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:10px;padding:10px 12px;border-radius:11px;
-  background:#071b45aa;border:1px solid #234879;
-  font-size:13px
-}
+.interval{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;background:#071b45aa;border:1px solid #234879;font-size:13px}
 .interval-time{font-weight:700;font-variant-numeric:tabular-nums}
 .interval-state{font-size:12px;text-align:right}
 .interval.on .interval-state{color:var(--cyan)}
 .interval.off{border-color:#713e58;background:#351e3c88}
 .interval.off .interval-state{color:#ff8795}
 .interval.unknown .interval-state{color:#c3cce0}
-.legend{
-  display:flex;gap:14px;flex-wrap:wrap;
-  font-size:12px;color:var(--muted);margin:4px 0 15px
-}
-.dot{
-  display:inline-block;width:9px;height:9px;
-  border-radius:3px;background:#42d9f5;margin-right:5px
-}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:4px 0 15px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;background:#42d9f5;margin-right:5px}
 .dot.off{background:#ff586c}
-.dot.unknown{
-  background:repeating-linear-gradient(135deg,#9caac2 0 2px,#344766 2px 4px)
-}
+.dot.unknown{background:repeating-linear-gradient(135deg,#9caac2 0 2px,#344766 2px 4px)}
 .error{color:#ffb8a8;font-size:13px;margin-top:10px;white-space:pre-wrap}
 footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
-@media(max-width:420px){
-  .panel{padding:15px}
-  .clock{width:min(86vw,340px)}
-  .interval{padding:9px;font-size:12px}
-}
+@media(max-width:420px){.panel{padding:15px}.clock{width:min(86vw,340px)}.interval{padding:9px;font-size:12px}}
 </style>
 </head>
-
 <body>
 <main class="wrap">
-
 <div class="head">
   <div class="brand">✧ Мереживо <span style="color:var(--cyan)">KYIV</span></div>
   <span class="status" id="status">● перевірка джерела</span>
@@ -253,18 +116,14 @@ footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
 
 <section class="panel">
   <h2>Знайти свій будинок</h2>
-
   <label for="street">Вулиця у Києві</label>
   <input id="street" placeholder="Введіть щонайменше 3 літери" autocomplete="off">
   <div class="suggestions hidden" id="streetList"></div>
-
   <label for="house">Номер будинку</label>
   <input id="house" placeholder="Наприклад, 25" autocomplete="off" disabled>
   <div class="suggestions hidden" id="houseList"></div>
-
   <button id="lookup" disabled>Отримати графік будинку</button>
   <div class="error" id="error"></div>
-
   <div class="notice">
     Сервіс отримує графік з відкритого API YASNO для ДТЕК Київські електромережі.
     Якщо джерело не відповідає або не публікує графік, ми покажемо це прямо,
@@ -274,28 +133,16 @@ footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
 
 <section class="panel hidden" id="result" aria-live="polite">
   <div class="topline">
-    <div>
-      <div class="muted">ОБРАНА АДРЕСА</div>
-      <strong id="address"></strong>
-    </div>
+    <div><div class="muted">ОБРАНА АДРЕСА</div><strong id="address"></strong></div>
     <span class="tag" id="group">Група —</span>
   </div>
-
   <div class="stats" style="margin-top:15px">
-    <div class="stat">
-      <strong id="todayStatus">—</strong>
-      <span>Статус на сьогодні</span>
-    </div>
-    <div class="stat">
-      <strong id="tomorrowStatus">—</strong>
-      <span>Статус на завтра</span>
-    </div>
+    <div class="stat"><strong id="todayStatus">—</strong><span>Статус на сьогодні</span></div>
+    <div class="stat"><strong id="tomorrowStatus">—</strong><span>Статус на завтра</span></div>
   </div>
 
   <h2 style="margin-top:22px">Сьогодні</h2>
-  <div class="clock-area">
-    <div id="todayClock" class="clock-no-data">Очікуємо графік</div>
-  </div>
+  <div class="clock-area"><div id="todayClock" class="clock-no-data">Очікуємо графік</div></div>
   <div class="legend">
     <span><i class="dot"></i>Світло є</span>
     <span><i class="dot off"></i>Відключення</span>
@@ -304,11 +151,8 @@ footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
   <div class="intervals" id="todayIntervals"></div>
 
   <h2 style="margin-top:22px">Завтра</h2>
-  <div class="clock-area">
-    <div id="tomorrowClock" class="clock-no-data">Очікуємо графік</div>
-  </div>
+  <div class="clock-area"><div id="tomorrowClock" class="clock-no-data">Очікуємо графік</div></div>
   <div class="intervals" id="tomorrowIntervals"></div>
-
   <p class="muted" id="updated" style="margin-top:12px"></p>
   <p class="muted" id="forecastNote"></p>
 </section>
@@ -317,12 +161,10 @@ footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
   Мереживо KYIV · незалежний інформаційний сервіс<br>
   Не є офіційним ресурсом ДТЕК або YASNO. Графік може змінюватися.
 </footer>
-
 </main>
 
 <script>
 const $=id=>document.getElementById(id);
-
 let chosenStreet=null;
 let chosenHouse=null;
 let debounce;
@@ -334,20 +176,15 @@ async function api(path){
   if(!r.ok)throw new Error(j.error||`HTTP ${r.status}`);
   return j;
 }
-
 function arr(x){
   if(Array.isArray(x))return x;
   if(Array.isArray(x?.data))return x.data;
   if(Array.isArray(x?.items))return x.items;
   return [];
 }
-
 function showList(el,items,handler,label){
   el.innerHTML='';
-  if(!items.length){
-    el.classList.add('hidden');
-    return;
-  }
+  if(!items.length){el.classList.add('hidden');return}
   items.forEach(item=>{
     const b=document.createElement('button');
     b.textContent=label(item);
@@ -356,7 +193,6 @@ function showList(el,items,handler,label){
   });
   el.classList.remove('hidden');
 }
-
 function stateLabel(s){
   return ({
     ScheduleApplies:'Графік опубліковано',
@@ -365,38 +201,26 @@ function stateLabel(s){
     EmergencyShutdowns:'Екстрені відключення'
   })[s]||s||'Дані відсутні';
 }
-
 function timeText(minutes){
-  const h=Math.floor(minutes/60);
-  const m=minutes%60;
+  const h=Math.floor(minutes/60),m=minutes%60;
   return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
 }
-
 function slotKind(type){
   if(type==='NotPlanned')return 'on';
   if(type==='Definite')return 'off';
   return 'unknown';
 }
-
-/* Координати на циферблаті */
 function polar(cx,cy,r,angle){
   const rad=(angle-90)*Math.PI/180;
-  return {
-    x:cx+r*Math.cos(rad),
-    y:cy+r*Math.sin(rad)
-  };
+  return {x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};
 }
-
-/* Кольоровий сектор */
 function ringSector(cx,cy,rOuter,rInner,startAngle,endAngle,color){
   if(endAngle<=startAngle)return '';
-
   const a1=polar(cx,cy,rOuter,startAngle);
   const a2=polar(cx,cy,rOuter,endAngle);
   const b2=polar(cx,cy,rInner,endAngle);
   const b1=polar(cx,cy,rInner,startAngle);
   const large=endAngle-startAngle>180?1:0;
-
   return `<path d="
     M ${a1.x} ${a1.y}
     A ${rOuter} ${rOuter} 0 ${large} 1 ${a2.x} ${a2.y}
@@ -405,37 +229,21 @@ function ringSector(cx,cy,rOuter,rInner,startAngle,endAngle,color){
     Z" fill="${color}" />`;
 }
 
-/* Одне кільце для всіх 24 годин */
+/* Одне кільце для всіх 24 годин; цифри збільшені та не обрізаються */
 function clockFace(slots){
   const cx=170,cy=170;
-  const colors={
-    on:'#24c9d9',
-    off:'#ff586c',
-    unknown:'#697b9b'
-  };
-
+  const colors={on:'#24c9d9',off:'#ff586c',unknown:'#697b9b'};
   let svg=`
-    <svg class="clock-svg" viewBox="0 0 340 340" aria-hidden="true">
-      <circle cx="170" cy="170" r="157"
-        fill="#06183e" stroke="#42658f" stroke-width="1.5"/>
-      <circle cx="170" cy="170" r="145"
-        fill="none" stroke="#203e69" stroke-width="22"/>
+    <svg class="clock-svg" viewBox="-15 -15 370 370" aria-hidden="true">
+      <circle cx="170" cy="170" r="157" fill="#06183e" stroke="#42658f" stroke-width="1.5"/>
+      <circle cx="170" cy="170" r="145" fill="none" stroke="#203e69" stroke-width="22"/>
   `;
-
   const sorted=[...(slots||[])].sort((a,b)=>a.start-b.start);
-
-  // Одне кольорове кільце на всі 24 години
   sorted.forEach(s=>{
     const start=Math.max(0,Math.min(1440,s.start));
     const end=Math.max(start,Math.min(1440,s.end));
     if(end<=start)return;
-
-    svg+=ringSector(
-      cx,cy,156,134,
-      start/1440*360,
-      end/1440*360,
-      colors[slotKind(s.type)]
-    );
+    svg+=ringSector(cx,cy,156,134,start/1440*360,end/1440*360,colors[slotKind(s.type)]);
   });
 
   // Цифри 1–12 на зовнішньому краї
@@ -443,40 +251,22 @@ function clockFace(slots){
     const angle=i*30;
     const p1=polar(cx,cy,157,angle);
     const p2=polar(cx,cy,150,angle);
-
-    svg+=`<line
-      x1="${p1.x}" y1="${p1.y}"
-      x2="${p2.x}" y2="${p2.y}"
+    svg+=`<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}"
       stroke="${i%3===0?'#e7f7ff':'#b8d9ed'}"
-      stroke-width="${i%3===0?2.5:1.3}"
-      stroke-linecap="round"/>`;
-
+      stroke-width="${i%3===0?2.5:1.3}" stroke-linecap="round"/>`;
     const label=polar(cx,cy,165,angle);
-
-    svg+=`<text
-      x="${label.x}" y="${label.y}"
-      font-size="${i%3===0?15:12}">
-      ${i===0?12:i}
-    </text>`;
+    svg+=`<text x="${label.x}" y="${label.y}" font-size="${i%3===0?20:17}">${i===0?12:i}</text>`;
   }
 
   // Хвилинні поділки
   for(let i=0;i<60;i++){
     if(i%5===0)continue;
-
     const angle=i*6;
     const p1=polar(cx,cy,157,angle);
     const p2=polar(cx,cy,153,angle);
-
-    svg+=`<line
-      x1="${p1.x}" y1="${p1.y}"
-      x2="${p2.x}" y2="${p2.y}"
-      stroke="#a9c9e2"
-      stroke-opacity=".8"
-      stroke-width="1"
-      stroke-linecap="round"/>`;
+    svg+=`<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}"
+      stroke="#a9c9e2" stroke-opacity=".8" stroke-width="1" stroke-linecap="round"/>`;
   }
-
   svg+=`</svg>`;
   return svg;
 }
@@ -484,7 +274,6 @@ function clockFace(slots){
 function makeClock(id,day,isToday){
   const el=$(id);
   const slots=day?.slots||[];
-
   if(!slots.length){
     el.className='clock-no-data';
     el.style.background='';
@@ -493,64 +282,41 @@ function makeClock(id,day,isToday){
       :'Немає опублікованих інтервалів';
     return;
   }
-
   el.className='clock';
   el.style.background='';
-
   el.innerHTML=`
     ${clockFace(slots)}
-
     ${isToday?`
       <div class="clock-hand hour-hand" id="${id}HourHand"></div>
       <div class="clock-hand minute-hand" id="${id}MinuteHand"></div>
       <div class="clock-pin"></div>
     `:''}
-
     <div class="clock-center">
-      <div class="clock-time" id="${id}Time">
-        ${isToday?'--:--':'24 ГОД'}
-      </div>
-      <div class="clock-caption">
-        ${isToday?'ПОТОЧНИЙ ЧАС':'ГРАФІК НА ЗАВТРА'}
-      </div>
-      <div class="clock-date">
-        ${day.date?new Date(day.date).toLocaleDateString('uk-UA'):''}
-      </div>
-    </div>
-  `;
-
+      <div class="clock-time" id="${id}Time">${isToday?'--:--':'24 ГОД'}</div>
+      <div class="clock-caption">${isToday?'ПОТОЧНИЙ ЧАС':'ГРАФІК НА ЗАВТРА'}</div>
+      <div class="clock-date">${day.date?new Date(day.date).toLocaleDateString('uk-UA'):''}</div>
+    </div>`;
   if(isToday)updateClockHand(id);
 }
-
-/* Рух стрілок відповідно до 24-годинного кола */
 function updateClockHand(id){
   const hourHand=$(id+'HourHand');
   const minuteHand=$(id+'MinuteHand');
   const time=$(id+'Time');
-
   if(!hourHand||!minuteHand||!time)return;
-
   const now=new Date();
   const hours=now.getHours();
   const minutes=now.getMinutes();
   const seconds=now.getSeconds();
-
   const hourAngle=hours*15;
   const minuteAngle=(hours+minutes/60+seconds/3600)*15;
-
   hourHand.style.transform=`rotate(${hourAngle}deg)`;
   minuteHand.style.transform=`rotate(${minuteAngle}deg)`;
-
-  time.textContent=
-    String(hours).padStart(2,'0')+':'+
-    String(minutes).padStart(2,'0');
+  time.textContent=String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0');
 }
-
 function drawIntervals(id,day){
   const el=$(id);
   el.innerHTML='';
   const slots=day?.slots||[];
-
   if(!slots.length){
     const msg=document.createElement('div');
     msg.className='muted';
@@ -560,30 +326,22 @@ function drawIntervals(id,day){
     el.append(msg);
     return;
   }
-
-  const sorted=[...slots].sort((a,b)=>a.start-b.start);
-
-  sorted.forEach(s=>{
+  [...slots].sort((a,b)=>a.start-b.start).forEach(s=>{
     const kind=slotKind(s.type);
     const item=document.createElement('div');
     item.className='interval '+kind;
-
     const time=document.createElement('span');
     time.className='interval-time';
     time.textContent=timeText(s.start)+' — '+timeText(s.end);
-
     const state=document.createElement('span');
     state.className='interval-state';
-
     if(kind==='off')state.textContent='● Відключення';
     else if(kind==='on')state.textContent='● Світло є';
     else state.textContent='● Невідомо';
-
     item.append(time,state);
     el.append(item);
   });
 }
-
 function drawDay(clockId,intervalId,day,isToday){
   makeClock(clockId,day,isToday);
   drawIntervals(intervalId,day);
@@ -598,33 +356,19 @@ $('street').addEventListener('input',()=>{
   $('house').disabled=true;
   $('lookup').disabled=true;
   $('houseList').classList.add('hidden');
-
   const q=$('street').value.trim();
-
-  if(q.length<3){
-    $('streetList').classList.add('hidden');
-    return;
-  }
-
+  if(q.length<3){$('streetList').classList.add('hidden');return}
   debounce=setTimeout(async()=>{
     try{
       const data=arr(await api('/api/streets?q='+encodeURIComponent(q)));
-
-      showList(
-        $('streetList'),
-        data,
-        item=>{
-          chosenStreet=item;
-          $('street').value=item.value||item.name||item.streetName||item.title||q;
-          $('streetList').classList.add('hidden');
-          $('house').disabled=false;
-          $('house').focus();
-        },
-        item=>item.value||item.name||item.streetName||item.title||'Вулиця'
-      );
-    }catch(e){
-      $('error').textContent=e.message;
-    }
+      showList($('streetList'),data,item=>{
+        chosenStreet=item;
+        $('street').value=item.value||item.name||item.streetName||item.title||q;
+        $('streetList').classList.add('hidden');
+        $('house').disabled=false;
+        $('house').focus();
+      },item=>item.value||item.name||item.streetName||item.title||'Вулиця');
+    }catch(e){$('error').textContent=e.message}
   },350);
 });
 
@@ -633,100 +377,65 @@ $('house').addEventListener('input',()=>{
   clearTimeout(debounce);
   chosenHouse=null;
   $('lookup').disabled=true;
-
   const q=$('house').value.trim();
   if(!chosenStreet||!q)return;
-
   debounce=setTimeout(async()=>{
     try{
-      const data=arr(await api(
-        '/api/houses?streetId='+
+      const data=arr(await api('/api/houses?streetId='+
         encodeURIComponent(chosenStreet.id||chosenStreet.streetId)+
-        '&q='+encodeURIComponent(q)
-      ));
-
-      showList(
-        $('houseList'),
-        data,
-        item=>{
-          chosenHouse=item;
-          $('house').value=item.value||item.name||item.houseName||
-            item.number||item.house||q;
-          $('houseList').classList.add('hidden');
-          $('lookup').disabled=false;
-        },
-        item=>item.value||item.name||item.houseName||
-          item.number||item.house||'Будинок'
-      );
-    }catch(e){
-      $('error').textContent=e.message;
-    }
+        '&q='+encodeURIComponent(q)));
+      showList($('houseList'),data,item=>{
+        chosenHouse=item;
+        $('house').value=item.value||item.name||item.houseName||item.number||item.house||q;
+        $('houseList').classList.add('hidden');
+        $('lookup').disabled=false;
+      },item=>item.value||item.name||item.houseName||item.number||item.house||'Будинок');
+    }catch(e){$('error').textContent=e.message}
   },300);
 });
 
 /* Отримання групи та графіка */
 $('lookup').onclick=async()=>{
   if(!chosenStreet||!chosenHouse)return;
-
   $('error').textContent='';
   $('lookup').disabled=true;
   $('lookup').textContent='Завантаження…';
-
   try{
     const sid=chosenStreet.id??chosenStreet.streetId;
     const hid=chosenHouse.id??chosenHouse.houseId;
-
     const [groupData,schedule]=await Promise.all([
       api(`/api/group?streetId=${encodeURIComponent(sid)}&houseId=${encodeURIComponent(hid)}`),
       api('/api/schedule')
     ]);
-
     const group=groupData.group??groupData.data?.group;
     const subgroup=groupData.subgroup??groupData.data?.subgroup;
     const key=group!=null?`${group}.${subgroup??1}`:null;
     const record=key?(schedule[key]||schedule.data?.[key]):null;
-
     $('address').textContent=`Київ, ${$('street').value}, ${$('house').value}`;
     $('group').textContent=key?`Група ${key}`:'Групу не визначено';
-
     if(record){
       $('todayStatus').textContent=stateLabel(record.today?.status);
       $('tomorrowStatus').textContent=stateLabel(record.tomorrow?.status);
-
       drawDay('todayClock','todayIntervals',record.today,true);
       drawDay('tomorrowClock','tomorrowIntervals',record.tomorrow,false);
-
       $('updated').textContent=record.updatedOn
         ?`Оновлено джерелом: ${new Date(record.updatedOn).toLocaleString('uk-UA')}`
         :'Час оновлення не надано';
-
-      $('forecastNote').textContent=
-        'Це офіційно опублікований графік джерела, а не гарантія фактичного електропостачання. Можливі аварійні та екстрені зміни.';
-
+      $('forecastNote').textContent='Це офіційно опублікований графік джерела, а не гарантія фактичного електропостачання. Можливі аварійні та екстрені зміни.';
       if(clockTimer)clearInterval(clockTimer);
-      clockTimer=setInterval(()=>{
-        updateClockHand('todayClock');
-      },1000);
-
+      clockTimer=setInterval(()=>updateClockHand('todayClock'),1000);
     }else{
       $('todayStatus').textContent='Немає даних';
       $('tomorrowStatus').textContent='Немає даних';
-
       drawDay('todayClock','todayIntervals',null,true);
       drawDay('tomorrowClock','tomorrowIntervals',null,false);
-
       $('updated').textContent='';
-      $('forecastNote').textContent=
-        'Для цієї групи графік не знайдено або формат відповіді змінився. Звірте адресу на офіційному сайті ДТЕК.';
+      $('forecastNote').textContent='Для цієї групи графік не знайдено або формат відповіді змінився. Звірте адресу на офіційному сайті ДТЕК.';
     }
-
     $('result').classList.remove('hidden');
     $('result').scrollIntoView({behavior:'smooth'});
-
   }catch(e){
-    $('error').textContent=
-      'Помилка отримання графіка: '+e.message+
-      '\nПеревірте адресу або спробуйте пізніше.';
+    $('error').textContent='Помилка отримання графіка: '+e.message+'\nПеревірте адресу або спробуйте пізніше.';
   }finally{
     $('lookup').disabled=false;
     $('lookup').textContent='Отримати графік будинку';
@@ -735,8 +444,8 @@ $('lookup').onclick=async()=>{
 
 /* Перевірка сервера */
 api('/api/health')
-  .then(()=> $('status').textContent='● API доступний')
-  .catch(()=> $('status').textContent='● сервер не підключено');
+  .then(()=>$('status').textContent='● API доступний')
+  .catch(()=>$('status').textContent='● сервер не підключено');
 </script>
 </body>
 </html>
