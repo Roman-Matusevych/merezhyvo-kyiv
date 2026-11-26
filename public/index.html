@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#071b4b">
 <link rel="manifest" href="/manifest.webmanifest">
 <title>Мереживо KYIV — графік електропостачання</title>
+
 <style>
 :root{
   color-scheme:dark;
@@ -80,84 +81,111 @@ button:disabled{opacity:.55;cursor:wait}
 .stat strong{display:block;font-size:16px}
 .stat span{font-size:12px;color:var(--muted)}
 
-/* Круговий 24-годинний годинник */
+/* Аналоговий 24-годинний циферблат */
 .clock-area{
   display:flex;justify-content:center;align-items:center;
   padding:12px 0 18px
 }
 .clock{
-  width:min(76vw,330px);
+  width:min(82vw,360px);
   aspect-ratio:1;
   border-radius:50%;
   position:relative;
   display:grid;
   place-items:center;
-  box-shadow:0 0 38px #148ee933;
+  overflow:hidden;
+  background:radial-gradient(circle,#102e62 0,#071a43 72%);
   border:1px solid #315787;
+  box-shadow:0 0 38px #148ee933,inset 0 0 25px #020d2a99
 }
-.clock:before{
-  content:"";
+.clock-svg{
   position:absolute;
-  inset:12%;
-  border-radius:50%;
-  background:radial-gradient(circle,#12346d,#071a43 72%);
-  border:1px solid #2c5486;
-  z-index:1
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  overflow:visible
+}
+.clock-svg text{
+  font-family:system-ui,sans-serif;
+  font-weight:700;
+  text-anchor:middle;
+  dominant-baseline:middle;
+  fill:#e5f5ff;
+  paint-order:stroke;
+  stroke:#071a43;
+  stroke-width:2px;
+  stroke-linejoin:round
 }
 .clock-center{
-  position:relative;
+  position:absolute;
   z-index:4;
+  width:42%;
+  height:42%;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
   text-align:center;
-  width:52%;
+  background:radial-gradient(circle,#12346d,#071a43 75%);
+  border:1px solid #315787;
+  box-shadow:0 0 18px #020d2a99;
   pointer-events:none
 }
 .clock-time{
-  font-size:clamp(31px,8vw,43px);
-  font-weight:650;
-  line-height:1.15;
+  font-size:clamp(25px,7vw,38px);
+  font-weight:700;
+  line-height:1.1;
   color:#e8fbff;
   font-variant-numeric:tabular-nums
 }
 .clock-caption{
-  font-size:10px;
-  letter-spacing:2px;
+  font-size:9px;
+  letter-spacing:1.5px;
   color:#a8d7ee;
   margin-top:5px
 }
-.clock-date{font-size:11px;color:#8caed6;margin-top:5px}
-.clock-label{
-  position:absolute;
-  z-index:3;
-  color:#d5eaff;
-  font-size:11px;
-  font-weight:650;
-  text-shadow:0 1px 5px #00112f;
-  transform:translate(-50%,-50%)
-}
-.clock-label.l00{top:5%;left:50%}
-.clock-label.l06{top:50%;left:95%}
-.clock-label.l12{top:95%;left:50%}
-.clock-label.l18{top:50%;left:5%}
+.clock-date{font-size:10px;color:#8caed6;margin-top:4px}
+
+/* Стрілки */
 .clock-hand{
   position:absolute;
-  z-index:2;
-  left:calc(50% - 1px);
+  left:50%;
   bottom:50%;
-  width:2px;
-  height:40%;
-  border-radius:5px;
-  background:#fff;
-  box-shadow:0 0 8px #42d9f5;
   transform-origin:50% 100%;
-  pointer-events:none
+  border-radius:10px;
+  pointer-events:none;
 }
-.clock-hand:after{
-  content:"";
+.hour-hand{
+  z-index:2;
+  width:6px;
+  height:22%;
+  margin-left:-3px;
+  background:linear-gradient(to top,#42d9f5,#e9fbff);
+  box-shadow:0 0 8px #42d9f5aa
+}
+.minute-hand{
+  z-index:3;
+  width:3px;
+  height:34%;
+  margin-left:-1.5px;
+  background:#fff;
+  box-shadow:0 0 7px #fff9
+}
+.clock-pin{
   position:absolute;
-  width:9px;height:9px;border-radius:50%;
+  z-index:5;
+  left:50%;
+  top:50%;
+  width:13px;
+  height:13px;
+  margin:-6.5px 0 0 -6.5px;
+  border-radius:50%;
   background:var(--cyan);
-  left:50%;bottom:-4px;transform:translateX(-50%);
-  box-shadow:0 0 9px var(--cyan)
+  border:2px solid #eaffff;
+  box-shadow:0 0 10px var(--cyan);
+  pointer-events:none
 }
 .clock-no-data{
   width:100%;max-width:330px;
@@ -197,11 +225,12 @@ button:disabled{opacity:.55;cursor:wait}
 footer{text-align:center;color:#7896bd;font-size:11px;padding:18px}
 @media(max-width:420px){
   .panel{padding:15px}
-  .clock{width:min(78vw,300px)}
+  .clock{width:min(86vw,340px)}
   .interval{padding:9px;font-size:12px}
 }
 </style>
 </head>
+
 <body>
 <main class="wrap">
 
@@ -343,77 +372,189 @@ function slotKind(type){
   return 'unknown';
 }
 
-function makeClock(id,day,isToday){
-  const el=$(id);
-  const slots=day?.slots||[];
+/* Координати точки на циферблаті */
+function polar(cx,cy,r,angle){
+  const rad=(angle-90)*Math.PI/180;
+  return {
+    x:cx+r*Math.cos(rad),
+    y:cy+r*Math.sin(rad)
+  };
+}
 
-  if(!slots.length){
-    el.className='clock-no-data';
-    el.innerHTML=day?.status==='WaitingForSchedule'
-      ?'Графік ще не опубліковано'
-      :'Немає опублікованих інтервалів';
-    return;
+/* Кольоровий сектор між двома радіусами */
+function ringSector(cx,cy,rOuter,rInner,startMinute,endMinute,color){
+  const startAngle=startMinute/720*360;
+  const endAngle=endMinute/720*360;
+
+  if(endMinute-startMinute>=719.99){
+    return [
+      ringSector(cx,cy,rOuter,rInner,startMinute,startMinute+360,color),
+      ringSector(cx,cy,rOuter,rInner,startMinute+360,endMinute,color)
+    ].join('');
   }
 
-  const sorted=[...slots].sort((a,b)=>a.start-b.start);
+  const a1=polar(cx,cy,rOuter,startAngle);
+  const a2=polar(cx,cy,rOuter,endAngle);
+  const b2=polar(cx,cy,rInner,endAngle);
+  const b1=polar(cx,cy,rInner,startAngle);
+  const large=endAngle-startAngle>180?1:0;
+
+  return `<path d="
+    M ${a1.x} ${a1.y}
+    A ${rOuter} ${rOuter} 0 ${large} 1 ${a2.x} ${a2.y}
+    L ${b2.x} ${b2.y}
+    A ${rInner} ${rInner} 0 ${large} 0 ${b1.x} ${b1.y}
+    Z" fill="${color}" />`;
+}
+
+/* Формування шкали, поділок та цифр */
+function clockFace(slots){
+  const cx=170,cy=170;
   const colors={
     on:'#24c9d9',
     off:'#ff586c',
     unknown:'#697b9b'
   };
 
-  let stops=[];
-  let cursor=0;
+  let svg=`
+    <svg class="clock-svg" viewBox="0 0 340 340" aria-hidden="true">
+      <circle cx="170" cy="170" r="157" fill="#06183e" stroke="#42658f" stroke-width="1.5"/>
+      <circle cx="170" cy="170" r="151" fill="none" stroke="#7894b9" stroke-opacity=".35" stroke-width="1"/>
+      <circle cx="170" cy="170" r="126" fill="none" stroke="#7894b9" stroke-opacity=".25" stroke-width="1"/>
+      <circle cx="170" cy="170" r="120" fill="none" stroke="#7894b9" stroke-opacity=".35" stroke-width="1"/>
+      <circle cx="170" cy="170" r="96" fill="none" stroke="#7894b9" stroke-opacity=".25" stroke-width="1"/>
+  `;
+
+  /* Порожні основи двох кілець */
+  svg+=`
+    <circle cx="${cx}" cy="${cy}" r="138.5"
+      fill="none" stroke="#203e69" stroke-width="23"/>
+    <circle cx="${cx}" cy="${cy}" r="108"
+      fill="none" stroke="#203e69" stroke-width="23"/>
+  `;
+
+  /* Перше кільце: 00–11 */
+  /* Друге кільце: 12–23 */
+  const sorted=[...(slots||[])].sort((a,b)=>a.start-b.start);
 
   sorted.forEach(s=>{
     const start=Math.max(0,Math.min(1440,s.start));
     const end=Math.max(start,Math.min(1440,s.end));
+    const color=colors[slotKind(s.type)];
 
-    if(start>cursor){
-      stops.push(`${colors.unknown} ${cursor/1440*100}% ${start/1440*100}%`);
+    const firstStart=Math.max(start,0);
+    const firstEnd=Math.min(end,720);
+
+    if(firstEnd>firstStart){
+      svg+=ringSector(
+        cx,cy,150,127,
+        firstStart,firstEnd,color
+      );
     }
 
-    const kind=slotKind(s.type);
-    stops.push(`${colors[kind]} ${start/1440*100}% ${end/1440*100}%`);
-    cursor=Math.max(cursor,end);
+    const secondStart=Math.max(start,720);
+    const secondEnd=Math.min(end,1440);
+
+    if(secondEnd>secondStart){
+      svg+=ringSector(
+        cx,cy,120,97,
+        secondStart-720,secondEnd-720,color
+      );
+    }
   });
 
-  if(cursor<1440){
-    stops.push(`${colors.unknown} ${cursor/1440*100}% 100%`);
+  /* Поділки та цифри для кожного кільця */
+  for(let i=0;i<12;i++){
+    const angle=i*30;
+
+    /* Зовнішнє кільце: 00–11 */
+    const outer1=polar(cx,cy,151,angle);
+    const outer2=polar(cx,cy,i%3===0?125:132,angle);
+
+    svg+=`<line x1="${outer1.x}" y1="${outer1.y}"
+      x2="${outer2.x}" y2="${outer2.y}"
+      stroke="${i%3===0?'#e7f7ff':'#b8d9ed'}"
+      stroke-width="${i%3===0?2.5:1.3}"
+      stroke-linecap="round"/>`;
+
+    const outerLabel=polar(cx,cy,138,angle);
+    svg+=`<text x="${outerLabel.x}" y="${outerLabel.y}"
+      font-size="${i%3===0?10:8}">${String(i).padStart(2,'0')}</text>`;
+
+    /* Внутрішнє кільце: 12–23 */
+    const inner1=polar(cx,cy,120,angle);
+    const inner2=polar(cx,cy,i%3===0?96:102,angle);
+
+    svg+=`<line x1="${inner1.x}" y1="${inner1.y}"
+      x2="${inner2.x}" y2="${inner2.y}"
+      stroke="${i%3===0?'#e7f7ff':'#b8d9ed'}"
+      stroke-width="${i%3===0?2.5:1.3}"
+      stroke-linecap="round"/>`;
+
+    const innerLabel=polar(cx,cy,108,angle);
+    svg+=`<text x="${innerLabel.x}" y="${innerLabel.y}"
+      font-size="${i%3===0?10:8}">${String(i+12).padStart(2,'0')}</text>`;
+  }
+
+  svg+=`</svg>`;
+  return svg;
+}
+
+function makeClock(id,day,isToday){
+  const el=$(id);
+  const slots=day?.slots||[];
+
+  if(!slots.length){
+    el.className='clock-no-data';
+    el.style.background='';
+    el.innerHTML=day?.status==='WaitingForSchedule'
+      ?'Графік ще не опубліковано'
+      :'Немає опублікованих інтервалів';
+    return;
   }
 
   el.className='clock';
+  el.style.background='';
+
   el.innerHTML=`
-    <span class="clock-label l00">00</span>
-    <span class="clock-label l06">06</span>
-    <span class="clock-label l12">12</span>
-    <span class="clock-label l18">18</span>
-    <div class="clock-hand" id="${id}Hand"></div>
+    ${clockFace(slots)}
+    ${isToday?`
+      <div class="clock-hand hour-hand" id="${id}HourHand"></div>
+      <div class="clock-hand minute-hand" id="${id}MinuteHand"></div>
+      <div class="clock-pin"></div>
+    `:''}
     <div class="clock-center">
       <div class="clock-time" id="${id}Time">${isToday?'--:--':'24 ГОД'}</div>
       <div class="clock-caption">${isToday?'ПОТОЧНИЙ ЧАС':'ГРАФІК НА ЗАВТРА'}</div>
-      <div class="clock-date">${day.date?new Date(day.date).toLocaleDateString('uk-UA') : ''}</div>
+      <div class="clock-date">${day.date?new Date(day.date).toLocaleDateString('uk-UA'):''}</div>
     </div>
   `;
-
-  el.style.background=`conic-gradient(from 0deg,${stops.join(',')})`;
 
   if(isToday)updateClockHand(id);
 }
 
+/* Аналогові годинна та хвилинна стрілки */
 function updateClockHand(id){
-  const hand=$(id+'Hand');
+  const hourHand=$(id+'HourHand');
+  const minuteHand=$(id+'MinuteHand');
   const time=$(id+'Time');
-  if(!hand||!time)return;
+
+  if(!hourHand||!minuteHand||!time)return;
 
   const now=new Date();
-  const minutes=now.getHours()*60+now.getMinutes();
-  const angle=minutes/1440*360;
+  const hours=now.getHours()%12;
+  const minutes=now.getMinutes();
+  const seconds=now.getSeconds();
 
-  hand.style.transform=`rotate(${angle}deg)`;
+  const minuteAngle=(minutes+seconds/60)*6;
+  const hourAngle=(hours+minutes/60+seconds/3600)*30;
+
+  minuteHand.style.transform=`rotate(${minuteAngle}deg)`;
+  hourHand.style.transform=`rotate(${hourAngle}deg)`;
+
   time.textContent=
     String(now.getHours()).padStart(2,'0')+':'+
-    String(now.getMinutes()).padStart(2,'0');
+    String(minutes).padStart(2,'0');
 }
 
 function drawIntervals(id,day){
@@ -572,7 +713,7 @@ $('lookup').onclick=async()=>{
       if(clockTimer)clearInterval(clockTimer);
       clockTimer=setInterval(()=>{
         updateClockHand('todayClock');
-      },10000);
+      },1000);
 
     }else{
       $('todayStatus').textContent='Немає даних';
